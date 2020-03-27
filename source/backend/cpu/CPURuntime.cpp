@@ -219,7 +219,7 @@ int MNNSetCPUThreadsMode(MNNCPUThreadsMode mode) {
             cpuAttachIDs = std::vector<int>(sortedCPUIDs.begin(), sortedCPUIDs.begin() + littleClusterOffset);
             break;
         case MNN_CPU_MODE_one_a55:
-            cpuAttachIDs.insert(cpuAttachIDs.begin(), one_a55, one_a55+4);
+            cpuAttachIDs.insert(cpuAttachIDs.begin(), one_a55, one_a55+1);
             break;
         case MNN_CPU_MODE_four_a55:
             cpuAttachIDs.insert(cpuAttachIDs.begin(), four_a55, four_a55+4);

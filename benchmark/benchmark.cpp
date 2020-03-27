@@ -26,11 +26,11 @@
 #include <sys/types.h>
 #include <dirent.h>
 #endif
-
 #include "core/Backend.hpp"
 #include <MNN/Interpreter.hpp>
 #include <MNN/MNNDefine.h>
 #include <MNN/Tensor.hpp>
+
 #include "revertMNNModel.hpp"
 /**
  TODOs:
@@ -117,7 +117,7 @@ static inline uint64_t getTimeInUs() {
 }
 
 std::vector<float> doBench(Model& model, int loop, int forward = MNN_FORWARD_CPU, bool only_inference = true,
-                           int numberThread = 4, int precision = 2) {
+                           int numberThread = 4, int precision = 2, int power = 1) {
     auto revertor = std::unique_ptr<Revert>(new Revert(model.model_file.c_str()));
     revertor->initialize();
     auto modelBuffer      = revertor->getBuffer();
@@ -129,7 +129,8 @@ std::vector<float> doBench(Model& model, int loop, int forward = MNN_FORWARD_CPU
     config.type      = static_cast<MNNForwardType>(forward);
     MNN::BackendConfig backendConfig;
     backendConfig.precision = (MNN::BackendConfig::PrecisionMode)precision;
-    backendConfig.power = MNN::BackendConfig::Power_High;
+    // backendConfig.power = MNN::BackendConfig::Power_High;
+    backendConfig.power = (MNN::BackendConfig::PowerMode)power;
     config.backendConfig = &backendConfig;
 
     std::vector<float> costs;
@@ -176,7 +177,7 @@ void displayStats(const std::string& name, const std::vector<float>& costs) {
         sum += v;
     }
     avg = costs.size() > 0 ? sum / costs.size() : 0;
-    printf("[ - ] %-24s    max = %8.3fms  min = %8.3fms  avg = %8.3fms\n", name.c_str(), max, avg == 0 ? 0 : min, avg);
+    printf("[ - ] %-24s    min = %8.3f  max = %8.3f  avg = %8.3f\n", name.c_str(), min, avg == 0 ? 0 : max, avg);
 }
 static inline std::string forwardType(MNNForwardType type) {
     switch (type) {
@@ -199,7 +200,7 @@ int main(int argc, const char* argv[]) {
     MNNForwardType forward = MNN_FORWARD_CPU;
     int numberThread       = 4;
     if (argc <= 2) {
-        std::cout << "Usage: " << argv[0] << " models_folder [loop_count] [forwardtype]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " models_folder [loop_count] [forwardtype] [numberThread] [precision] [power]" << std::endl;
         return 1;
     }
     if (argc >= 3) {
@@ -215,12 +216,16 @@ int main(int argc, const char* argv[]) {
     if (argc >= 6) {
         precision = atoi(argv[5]);
     }
-    std::cout << "Forward type: **" << forwardType(forward) << "** thread=" << numberThread << "** precision=" <<precision << std::endl;
+    int power = 1;
+    if (argc >= 7) {
+        power = atoi(argv[6]);
+    }
+    std::cout << "Forward type: **" << forwardType(forward) << "** thread=" << numberThread << "** precision=" <<precision << "** power=" <<power << std::endl;
     std::vector<Model> models = findModelFiles(argv[1]);
 
     std::cout << "--------> Benchmarking... loop = " << argv[2] << std::endl;
     for (auto& m : models) {
-        std::vector<float> costs = doBench(m, loop, forward, false, numberThread, precision);
+        std::vector<float> costs = doBench(m, loop, forward, false, numberThread, precision, power);
         displayStats(m.name, costs);
     }
 }
