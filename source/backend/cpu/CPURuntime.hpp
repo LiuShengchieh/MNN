@@ -29,7 +29,11 @@ typedef enum {
     /* Bind threads to little CPUs */
     MNN_CPU_MODE_LITTLE = 2,
     /* Bind threads to big CPUs */
-    MNN_CPU_MODE_BIG = 3
+    MNN_CPU_MODE_BIG = 3,
+    /* Bind threads to  0,1,2,3(4xA55) */
+    MNN_CPU_MODE_one_a55 = 4,
+    /* Bind threads to 1(1xA55) */
+    MNN_CPU_MODE_four_a55 = 5
 } MNNCPUThreadsMode;
 int MNNSetCPUThreadsMode(MNNCPUThreadsMode mode);
 

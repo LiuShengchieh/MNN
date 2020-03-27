@@ -56,7 +56,7 @@ struct BackendConfig {
 
     MemoryMode memory = Memory_Normal;
 
-    enum PowerMode { Power_Normal = 0, Power_High, Power_Low };
+    enum PowerMode { Power_Normal = 0, Power_High, Power_Low, Power_1xA55, Power_4xA55 };
 
     PowerMode power = Power_Normal;
 

@@ -61,6 +61,12 @@ CPUBackend::CPUBackend(int numberThread, BackendConfig::MemoryMode memory, Backe
         case BackendConfig::Power_High:
             MNNSetCPUThreadsMode(MNN_CPU_MODE_POWER_FRI);
             break;
+        case BackendConfig::Power_1xA55:
+            MNNSetCPUThreadsMode(MNN_CPU_MODE_one_a55);
+            break;
+        case BackendConfig::Power_4xA55:
+            MNNSetCPUThreadsMode(MNN_CPU_MODE_four_a55);
+            break;
         default:
             break;
     }

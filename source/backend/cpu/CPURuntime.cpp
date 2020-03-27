@@ -206,6 +206,8 @@ int MNNSetCPUThreadsMode(MNNCPUThreadsMode mode) {
         MNN_PRINT("This CPU Arch Do NOT support for setting cpu thread mode\n");
     }
     std::vector<int> cpuAttachIDs;
+    int four_a55[4] = {0,1,2,3};
+    int one_a55[1] = {1};
     switch (mode) {
         case MNN_CPU_MODE_POWER_FRI:
             cpuAttachIDs = sortedCPUIDs;
@@ -216,9 +218,18 @@ int MNNSetCPUThreadsMode(MNNCPUThreadsMode mode) {
         case MNN_CPU_MODE_BIG:
             cpuAttachIDs = std::vector<int>(sortedCPUIDs.begin(), sortedCPUIDs.begin() + littleClusterOffset);
             break;
+        case MNN_CPU_MODE_one_a55:
+            cpuAttachIDs.insert(cpuAttachIDs.begin(), one_a55, one_a55+4);
+            break;
+        case MNN_CPU_MODE_four_a55:
+            cpuAttachIDs.insert(cpuAttachIDs.begin(), four_a55, four_a55+4);
+            break;
         default:
             cpuAttachIDs = sortedCPUIDs;
             break;
+    }
+    for (auto v : cpuAttachIDs){
+        fprintf(stderr, "cpuid is %d, cpufreq is %d\n", v, getCPUMaxFreqKHz(v));
     }
 
 #ifdef _OPENMP
